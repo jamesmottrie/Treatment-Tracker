@@ -1,0 +1,38 @@
+# Mon traitement — app iPhone
+
+Deux choses dans ce dossier :
+1. L'app installable (tout sauf les .ics)
+2. (fournis à part) les fichiers calendrier .ics pour les notifications
+
+## A. Installer l'app sur l'iPhone 15 (écran d'accueil, sans Claude)
+
+L'app a besoin d'être servie via une adresse https une seule fois. Le plus simple et gratuit : GitHub Pages.
+
+1. Crée un compte sur github.com (gratuit).
+2. Nouveau repository (public), ex. "traitement".
+3. Bouton "Add file" > "Upload files" > glisse TOUS les fichiers de ce dossier
+   (index.html, manifest.json, sw.js, icon-192.png, icon-512.png, apple-touch-icon.png) > Commit.
+4. Onglet "Settings" > "Pages" > Source : branche "main", dossier "/ (root)" > Save.
+5. Après ~1 min, GitHub donne une adresse du type
+   https://TONNOM.github.io/traitement/
+6. Ouvre cette adresse dans **Safari** sur l'iPhone.
+7. Bouton Partager (carré + flèche) > "Sur l'écran d'accueil" > Ajouter.
+
+Tu as maintenant une icône "Traitement" comme une vraie app : plein écran, hors-ligne,
+et l'historique reste sur le téléphone.
+
+## B. Notifications fiables (app fermée)
+
+iOS ne déclenche pas de notifications planifiées depuis une app web quand elle est fermée.
+Solution propre : importe le calendrier.
+
+1. Envoie-toi par mail le fichier **traitement-rappels-plus2.ics** (rythme +2 gouttes/jour)
+   ou **traitement-rappels-plus3.ics** (+3/jour) — choisis le même rythme que dans l'app.
+2. Ouvre le fichier sur l'iPhone > "Ajouter tout" au calendrier.
+3. Tu reçois : rappel matin (08:00) et soir (20:00), le nombre exact de gouttes pour l'item 4
+   chaque jour, et une alerte quand une cure se termine (1 / 2 / 3 mois).
+   Tu peux décaler les heures dans l'app Calendrier si besoin.
+
+## Sauvegarde
+Dans l'app : ⚙ > Exporter pour télécharger une copie de l'historique. Importer pour la restaurer
+(par ex. sur un nouveau téléphone).

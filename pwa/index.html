@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Traitement" />
+<meta name="theme-color" content="#1E2A22" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<title>Mon traitement</title>
+<style>
+  :root{
+    --bg:#EEF1EC; --card:#fff; --ink:#1E2A22; --green:#3E6B4F; --greenSoft:#E4EDE6;
+    --honey:#B5651D; --honeySoft:#F6ECDD; --muted:#7C8A80; --line:#DCE3DC;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    padding:max(18px,env(safe-area-inset-top)) 16px calc(40px + env(safe-area-inset-bottom));
+    max-width:520px;margin:0 auto;min-height:100vh}
+  button{font-family:inherit;cursor:pointer}
+  header{display:flex;justify-content:space-between;align-items:flex-start}
+  .kicker{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--green);font-weight:600}
+  h1{font-size:26px;margin:2px 0 0;font-weight:700;letter-spacing:-.5px}
+  .gear{background:var(--card);border:1px solid var(--line);border-radius:12px;width:40px;height:40px;font-size:18px;color:var(--muted)}
+  .dateNav{display:flex;align-items:center;gap:8px;margin-top:16px}
+  .navBtn{flex:0 0 44px;height:44px;font-size:24px;background:var(--card);border:1px solid var(--line);border-radius:12px;color:var(--green)}
+  .dateLabel{flex:1;height:44px;background:var(--card);border:1px solid var(--line);border-radius:12px;font-size:14px;font-weight:600;color:var(--ink);display:flex;align-items:center;justify-content:center;gap:8px;text-transform:capitalize}
+  .todayPill{font-size:10px;background:var(--greenSoft);color:var(--green);padding:2px 8px;border-radius:20px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-top:12px;display:flex;flex-direction:column;gap:16px}
+  .field{display:flex;flex-direction:column;gap:8px}
+  .fieldLabel{font-size:13px;font-weight:600}
+  input[type=date]{padding:10px 12px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:inherit;background:var(--bg)}
+  .incRow{display:flex;gap:8px}
+  .incBtn{flex:1;padding:10px 0;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:14px;font-weight:600;color:var(--muted)}
+  .incBtn.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .hint{font-size:11.5px;color:var(--muted)}
+  .ghost{padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px;font-weight:600;color:var(--green)}
+  .hero{background:var(--ink);border-radius:20px;padding:18px 20px;margin-top:14px;color:#fff}
+  .heroTop{display:flex;justify-content:space-between;align-items:center}
+  .heroLabel{font-size:12px;letter-spacing:1px;text-transform:uppercase;color:#9fb3a4;font-weight:600}
+  .heroDay{font-size:12px;background:rgba(255,255,255,.12);padding:3px 10px;border-radius:20px;font-weight:600}
+  .heroNumWrap{display:flex;align-items:baseline;gap:12px;margin-top:6px}
+  .heroNum{font-size:64px;font-weight:800;color:var(--honey);line-height:1;letter-spacing:-2px}
+  .heroUnit{font-size:14px;color:#c6d3c9;line-height:1.2;font-weight:600}
+  .heroFoot{font-size:12.5px;color:#9fb3a4;margin-top:6px}
+  .dropEdit{display:flex;align-items:center;gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.1)}
+  .dropEditLabel{font-size:13px;color:#c6d3c9}
+  .stepBtn{width:34px;height:34px;border-radius:9px;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:20px}
+  .dropVal{font-size:18px;font-weight:700;min-width:30px;text-align:center}
+  .resetDrop{margin-left:auto;font-size:11.5px;background:transparent;border:1px solid rgba(255,255,255,.2);color:#c6d3c9;padding:5px 9px;border-radius:8px}
+  .progressWrap{display:flex;align-items:center;gap:10px;margin:16px 2px 8px}
+  .progressBar{flex:1;height:8px;background:var(--line);border-radius:20px;overflow:hidden}
+  .progressFill{height:100%;background:var(--green);border-radius:20px;transition:width .25s}
+  .progressTxt{font-size:13px;font-weight:700;color:var(--green);min-width:38px;text-align:right}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
+  .card.done-cure{opacity:.55}
+  .cardHead{display:flex;gap:12px;align-items:flex-start}
+  .num{flex:0 0 26px;height:26px;border-radius:8px;background:var(--greenSoft);color:var(--green);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center}
+  .cardName{font-size:14.5px;font-weight:600;line-height:1.3}
+  .inlineDrops{color:var(--honey);font-weight:700}
+  .cardDetail{font-size:12.5px;color:var(--muted);margin-top:3px}
+  .tag{font-style:italic}
+  .dur{display:inline-block;margin-top:6px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--greenSoft);color:var(--green)}
+  .dur.cont{background:#eef0ee;color:var(--muted)}
+  .dur.fin{background:var(--honeySoft);color:var(--honey)}
+  .slots{display:flex;gap:8px;margin-top:12px}
+  .slot{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 0;border-radius:11px;border:1px solid var(--line);background:var(--bg);font-size:13.5px;font-weight:600;color:var(--muted);text-transform:capitalize;transition:all .12s}
+  .slot.on{background:var(--greenSoft);border-color:var(--green);color:var(--green)}
+  .slot:active{transform:scale(.96)}
+  .box{width:20px;height:20px;border-radius:6px;border:1.5px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:700}
+  .slot.on .box{background:var(--green);border-color:var(--green)}
+  .toggleBtn{margin-top:16px;width:100%;padding:12px 0;background:transparent;border:1px dashed var(--line);border-radius:12px;color:var(--green);font-weight:600;font-size:13.5px}
+  .ramp{margin-top:8px;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .rampRow{display:flex;align-items:center;padding:10px 14px;border-bottom:1px solid var(--line);font-size:13.5px}
+  .rampRow.now{background:var(--honeySoft)}
+  .rampDay{flex:0 0 44px;font-weight:700;color:var(--green)}
+  .rampDate{flex:1;color:var(--muted);text-transform:capitalize}
+  .rampDrops{font-weight:700;color:var(--honey)}
+  footer{margin-top:22px;font-size:11.5px;color:var(--muted);text-align:center;line-height:1.6}
+  .notStarted{font-size:14px;color:#c6d3c9;margin-top:8px;line-height:1.5}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="kicker">Traitement · Dr de Pret</div><h1>Mottrie James</h1></div>
+  <button class="gear" id="gear" aria-label="Réglages">⚙</button>
+</header>
+
+<div class="dateNav">
+  <button class="navBtn" id="prev">‹</button>
+  <button class="dateLabel" id="dateLabel"></button>
+  <button class="navBtn" id="next">›</button>
+</div>
+
+<div class="panel" id="settings" style="display:none">
+  <div class="field">
+    <span class="fieldLabel">Début du traitement (jour 1)</span>
+    <input type="date" id="startDate" />
+  </div>
+  <div class="field">
+    <span class="fieldLabel">Augmentation des gouttes / jour (item 4)</span>
+    <div class="incRow">
+      <button class="incBtn" data-inc="2">+2 gouttes</button>
+      <button class="incBtn" data-inc="3">+3 gouttes</button>
+    </div>
+    <span class="hint">L'ordonnance dit « +2 à 3 gouttes ». Choisis ton rythme.</span>
+  </div>
+  <div class="field">
+    <span class="fieldLabel">Sauvegarde de l'historique</span>
+    <div class="incRow">
+      <button class="ghost" id="export">⤓ Exporter (backup)</button>
+      <button class="ghost" id="importBtn">⤒ Importer</button>
+    </div>
+    <input type="file" id="importFile" accept="application/json" style="display:none" />
+    <button class="ghost" id="notif">🔔 Activer / tester les rappels</button>
+    <span class="hint">Les données restent sur ton téléphone. Exporte de temps en temps pour ne rien perdre.</span>
+  </div>
+</div>
+
+<div class="hero" id="hero"></div>
+
+<div class="progressWrap">
+  <div class="progressBar"><div class="progressFill" id="fill"></div></div>
+  <span class="progressTxt" id="progressTxt"></span>
+</div>
+
+<div id="list"></div>
+
+<button class="toggleBtn" id="rampToggle">Voir la montée en gouttes (item 4) ▼</button>
+<div class="ramp" id="ramp" style="display:none"></div>
+
+<footer>
+  Outil de suivi personnel · ne remplace pas l'avis du Dr de Pret.<br/>
+  Rappels fiables en arrière-plan : importe le fichier calendrier (.ics) fourni.
+</footer>
+
+<script>
+const ITEMS=[
+ {id:1,name:"Teinture aubépine, passiflore & ballote",detail:"2 ml matin + 2 ml soir",tag:"« xanax nature »",slots:["matin","soir"],dur:null},
+ {id:2,name:"Scutellaria baicalensis (Dynveo)",detail:"2x / jour",tag:"tension nerveuse & immunité",slots:["matin","soir"],dur:null},
+ {id:3,name:"Hepatance (Jade Recherche)",detail:"2x / jour",tag:"soutien foie–bile",slots:["matin","soir"],dur:60},
+ {id:4,name:"TM Renouée + Griffe du chat + Sida acuta + Sauge rouge",detail:"2x / jour · dose progressive",tag:"préparation Lyme",slots:["matin","soir"],dur:null,titration:true},
+ {id:5,name:"ES Gentiane 80 / Mélisse 80 / Aigremoine 80 / Fumeterre 50 mg",detail:"2x / jour · avant repas",tag:"soutien digestif haut",slots:["matin","soir"],dur:30},
+ {id:6,name:"Magnevits Lepivits",detail:"2x / jour",tag:"stabilisateur neuro-musculaire",slots:["matin","soir"],dur:null},
+ {id:7,name:"SupraSélénium DEBA",detail:"1x / jour",tag:"",slots:["jour"],dur:90},
+];
+const BASE=5,MAX=60;
+const pad=n=>String(n).padStart(2,"0");
+const toKey=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fromKey=k=>{const[y,m,d]=k.split("-").map(Number);return new Date(y,m-1,d);};
+const dayDiff=(a,b)=>Math.round((fromKey(a)-fromKey(b))/86400000);
+const addDays=(k,n)=>{const d=fromKey(k);d.setDate(d.getDate()+n);return toKey(d);};
+const fmtLong=k=>fromKey(k).toLocaleDateString("fr-BE",{weekday:"long",day:"numeric",month:"long"});
+const fmtShort=k=>fromKey(k).toLocaleDateString("fr-BE",{day:"numeric",month:"short"});
+const fmtDM=k=>fromKey(k).toLocaleDateString("fr-BE",{day:"2-digit",month:"2-digit"});
+
+// default start = tomorrow
+const TOMORROW=toKey(addDays(toKey(new Date()),1));
+let config=load("trt_config",{startDate:TOMORROW,inc:2});
+let log=load("trt_log",{});
+let selected=toKey(new Date());
+let showSettings=false, showRamp=false;
+
+function load(k,f){try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch{return f;}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+function suggested(dateKey){const dn=dayDiff(dateKey,config.startDate)+1;
+  if(dn<1)return{started:false,dn};
+  const d=Math.min(BASE+(dn-1)*config.inc,MAX);return{started:true,dn,drops:d,capped:d>=MAX};}
+
+function render(){
+  const today=toKey(new Date());
+  document.getElementById("dateLabel").innerHTML=
+    `<span>${fmtLong(selected)}</span>`+(selected===today?`<span class="todayPill">aujourd'hui</span>`:``);
+  // settings panel
+  const sp=document.getElementById("settings");
+  sp.style.display=showSettings?"flex":"none";
+  document.getElementById("startDate").value=config.startDate;
+  document.querySelectorAll(".incBtn").forEach(b=>b.classList.toggle("on",+b.dataset.inc===config.inc));
+
+  const dayLog=log[selected]||{};
+  const sug=suggested(selected);
+  const dropsTaken=dayLog.drops??(sug.started?sug.drops:0);
+
+  // hero
+  const hero=document.getElementById("hero");
+  if(sug.started){
+    const next=Math.min((sug.drops)+config.inc,MAX);
+    hero.innerHTML=`
+      <div class="heroTop"><span class="heroLabel">Item 4 · gouttes Lyme</span>
+        <span class="heroDay">Jour ${sug.dn}</span></div>
+      <div class="heroNumWrap"><span class="heroNum">${dropsTaken}</span>
+        <span class="heroUnit">gouttes<br/>2x / jour</span></div>
+      <div class="heroFoot">${sug.capped?`<b style="color:var(--honey)">Palier max atteint (60)</b>`
+        :`Suggéré ce jour : ${sug.drops} · demain ${next}`}</div>
+      <div class="dropEdit">
+        <span class="dropEditLabel">Pris réellement :</span>
+        <button class="stepBtn" id="dminus">−</button>
+        <span class="dropVal">${dropsTaken}</span>
+        <button class="stepBtn" id="dplus">+</button>
+        ${dayLog.drops!=null&&dayLog.drops!==sug.drops?`<button class="resetDrop" id="dreset">↺ suggéré</button>`:``}
+      </div>`;
+  }else{
+    const wait=Math.abs(dayDiff(selected,config.startDate));
+    hero.innerHTML=`<div class="heroTop"><span class="heroLabel">Item 4 · gouttes Lyme</span></div>
+      <div class="notStarted">Commence le ${fmtDM(config.startDate)} · ${wait} j à attendre</div>`;
+  }
+
+  // progress
+  const allSlots=ITEMS.flatMap(it=>activeOn(it,selected)?it.slots.map(s=>`${it.id}-${s}`):[]);
+  const done=allSlots.filter(k=>dayLog[k]).length;
+  const pct=allSlots.length?Math.round(done/allSlots.length*100):0;
+  document.getElementById("fill").style.width=pct+"%";
+  document.getElementById("progressTxt").textContent=`${done}/${allSlots.length}`;
+
+  // list
+  document.getElementById("list").innerHTML=ITEMS.map(it=>{
+    const ds=durStatus(it,selected);
+    const fin=ds&&ds.state==="fin";
+    const drowsTag=it.titration&&sug.started?`<span class="inlineDrops"> · ${dropsTaken} gtt</span>`:``;
+    const slots=fin?`<div class="cardDetail" style="margin-top:12px">Cure terminée — voir Dr de Pret.</div>`
+      :`<div class="slots">`+it.slots.map(s=>{
+        const k=`${it.id}-${s}`,on=!!dayLog[k];
+        return `<button class="slot ${on?"on":""}" data-k="${k}"><span class="box">${on?"✓":""}</span>${s}</button>`;
+      }).join("")+`</div>`;
+    return `<div class="card ${fin?"done-cure":""}">
+      <div class="cardHead"><span class="num">${it.id}</span>
+        <div style="flex:1;min-width:0">
+          <div class="cardName">${it.name}${drowsTag}</div>
+          <div class="cardDetail">${it.detail}${it.tag?` · <span class="tag">${it.tag}</span>`:``}</div>
+          ${ds?`<span class="dur ${ds.cls}">${ds.text}</span>`:``}
+        </div></div>${slots}</div>`;
+  }).join("");
+
+  // ramp
+  const ramp=document.getElementById("ramp");
+  document.getElementById("rampToggle").textContent=(showRamp?"Masquer":"Voir")+" la montée en gouttes (item 4) "+(showRamp?"▲":"▼");
+  ramp.style.display=showRamp?"block":"none";
+  if(showRamp){
+    let rows="";
+    for(let i=0;i<14;i++){const k=addDays(selected,i);const d=suggested(k);if(!d.started)continue;
+      rows+=`<div class="rampRow ${k===selected?"now":""}"><span class="rampDay">J${d.dn}</span>
+        <span class="rampDate">${fmtShort(k)}</span>
+        <span class="rampDrops">${d.drops} gtt ${d.capped?"(max)":""}</span></div>`;}
+    ramp.innerHTML=rows||`<div class="rampRow">Pas encore commencé.</div>`;
+  }
+  bind();
+}
+
+function activeOn(it,k){const ds=durStatus(it,k);return !(ds&&ds.state==="fin")&&!(ds&&ds.state==="wait");}
+function durStatus(it,k){
+  const dn=dayDiff(k,config.startDate)+1;
+  if(!it.dur){ if(dn<1)return{state:"wait",cls:"cont",text:"démarre bientôt"};
+    return{state:"cont",cls:"cont",text:"en continu"}; }
+  if(dn<1)return{state:"wait",cls:"cont",text:"pas commencé"};
+  const endK=addDays(config.startDate,it.dur-1);
+  if(dn>it.dur)return{state:"fin",cls:"fin",text:`terminé le ${fmtDM(endK)}`};
+  return{state:"go",cls:"",text:`jour ${dn} / ${it.dur} · fin ${fmtDM(endK)}`};
+}
+
+function setDay(k){selected=k;render();}
+function patch(p){log[selected]={...(log[selected]||{}),...p};save("trt_log",log);render();}
+
+function bind(){
+  document.querySelectorAll(".slot[data-k]").forEach(b=>b.onclick=()=>{
+    const k=b.dataset.k;const dl=log[selected]||{};patch({[k]:!dl[k]});});
+  const dl=log[selected]||{};const sug=suggested(selected);const cur=dl.drops??(sug.started?sug.drops:0);
+  const m=document.getElementById("dminus"),p=document.getElementById("dplus"),r=document.getElementById("dreset");
+  if(m)m.onclick=()=>patch({drops:Math.max(0,cur-1)});
+  if(p)p.onclick=()=>patch({drops:Math.min(MAX,cur+1)});
+  if(r)r.onclick=()=>{const c={...log[selected]};delete c.drops;log[selected]=c;save("trt_log",log);render();};
+}
+
+// controls
+document.getElementById("prev").onclick=()=>setDay(addDays(selected,-1));
+document.getElementById("next").onclick=()=>setDay(addDays(selected,1));
+document.getElementById("dateLabel").onclick=()=>setDay(toKey(new Date()));
+document.getElementById("gear").onclick=()=>{showSettings=!showSettings;render();};
+document.getElementById("rampToggle").onclick=()=>{showRamp=!showRamp;render();};
+document.getElementById("startDate").onchange=e=>{config.startDate=e.target.value;save("trt_config",config);render();};
+document.querySelectorAll(".incBtn").forEach(b=>b.onclick=()=>{config.inc=+b.dataset.inc;save("trt_config",config);render();});
+
+// export / import
+document.getElementById("export").onclick=()=>{
+  const data={config,log,exported:new Date().toISOString()};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);
+  a.download=`traitement-backup-${toKey(new Date())}.json`;a.click();
+};
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+  rd.onload=()=>{try{const d=JSON.parse(rd.result);
+    if(d.config)config=d.config; if(d.log)log=d.log;
+    save("trt_config",config);save("trt_log",log);render();
+    alert("Historique restauré.");}catch{alert("Fichier invalide.");}};
+  rd.readAsText(f);
+};
+// notifications (foreground test; background = .ics)
+document.getElementById("notif").onclick=async()=>{
+  if(!("Notification"in window)){alert("Notifications non supportées ici.");return;}
+  const p=await Notification.requestPermission();
+  if(p==="granted"){new Notification("Rappel traitement activé",{body:"Pour des rappels fiables même app fermée, importe le calendrier .ics."});}
+  else{alert("Autorisation refusée. Tu peux l'activer dans Réglages > Notifications.");}
+};
+
+if("serviceWorker"in navigator){navigator.serviceWorker.register("sw.js").catch(()=>{});}
+// re-render on resume so the date is always current
+document.addEventListener("visibilitychange",()=>{if(!document.hidden){selected=toKey(new Date());render();}});
+render();
+</script>
+</body>
+</html>
